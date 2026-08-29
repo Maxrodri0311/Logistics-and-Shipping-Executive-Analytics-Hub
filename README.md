@@ -18,28 +18,29 @@ The platform transforms raw shipping quotes and tracking events into an optimize
 
 ```mermaid
 flowchart TD
-    subgraph S1 ["1. Ingestion Layer"]
-        A["Carrier Quotes & Tracking Webhooks"] --> B[("Raw Parquet Lakehouse")]
-    end
+    A["📦 Raw Carrier Quotes & Tracking Webhooks"] --> B["🗄️ Raw Parquet Lakehouse"]
+    B --> C["⚡ DuckDB OLAP Transformation Engine"]
+    C --> D["⭐ Kimball Star Schema Data Warehouse"]
+    
+    D --> E["📊 Power BI VertiPaq DAX Suite"]
+    D --> F["📈 Tableau Hyper & Looker SQL Views"]
+    D --> G["📑 Headless OpenPyXL Excel Engine"]
+    
+    E --> H["🚀 Interactive Executive Reports"]
+    F --> I["🔍 Self-Service Multi-Dimensional BI"]
+    G --> J["💼 C-Level Board-Ready Workbook (.xlsx)"]
 
-    subgraph S2 ["2. Dimensional Modeling & OLAP"]
-        B --> C["DuckDB Analytical Engine"]
-        C --> D[("Kimball Star Schema")]
-    end
-
-    subgraph S3 ["3. Multi-Platform Semantic Layer"]
-        D --> E["Power BI VertiPaq DAX"]
-        D --> F["Tableau Hyper & Looker SQL"]
-        D --> G["Python OpenPyXL Engine"]
-    end
-
-    subgraph S4 ["4. Executive Deliverables"]
-        E --> H["Interactive Power BI Reports"]
-        F --> I["Self-Service BI Views"]
-        G --> J["Executive Board Workbook (.xlsx)"]
-    end
+    style A fill:#1E293B,stroke:#38BDF8,stroke-width:2px,color:#FFFFFF
+    style B fill:#1E293B,stroke:#38BDF8,stroke-width:2px,color:#FFFFFF
+    style C fill:#1E293B,stroke:#F59E0B,stroke-width:2px,color:#FFFFFF
+    style D fill:#0F172A,stroke:#10B981,stroke-width:2px,color:#FFFFFF
+    style E fill:#1E293B,stroke:#818CF8,stroke-width:2px,color:#FFFFFF
+    style F fill:#1E293B,stroke:#818CF8,stroke-width:2px,color:#FFFFFF
+    style G fill:#1E293B,stroke:#818CF8,stroke-width:2px,color:#FFFFFF
+    style H fill:#0F172A,stroke:#10B981,stroke-width:2px,color:#FFFFFF
+    style I fill:#0F172A,stroke:#10B981,stroke-width:2px,color:#FFFFFF
+    style J fill:#0F172A,stroke:#10B981,stroke-width:2px,color:#FFFFFF
 ```
-
 
 ---
 
@@ -47,14 +48,21 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    DC["dim_carriers<br/>(Carrier ID, SLA Target, Contract Tier)"] -->|carrier_id| FS["★ fact_shipments<br/>(Shipment ID, Weight, Rates, Margin, SLAs)"]
-    DM["dim_merchants<br/>(Merchant ID, Tier, Industry, Markup)"] -->|merchant_id| FS
-    DG["dim_geography<br/>(Geo ID, Region, Zone Type, Surcharge)"] -->|dest_geo_id| FS
-    DD["dim_date<br/>(Date ID, Year, Month, Day, Week)"] -->|order_date_id| FS
+    DC["dim_carriers<br/>(Carrier ID, SLAs, Contract Tiers)"] -->|carrier_id| FS["★ fact_shipments<br/>(Shipment ID, Weight, Rates, Margin, SLAs)"]
+    DM["dim_merchants<br/>(Merchant ID, Tiers, Category, Markup)"] -->|merchant_id| FS
+    DG["dim_geography<br/>(Geo ID, Region, Zone Type, Surcharges)"] -->|dest_geo_id| FS
+    DD["dim_date<br/>(Date ID, Year, Month, Week, Day)"] -->|order_date_id| FS
 
-    DC -->|carrier_id| FQ["★ fact_carrier_quotes<br/>(Quote ID, Quoted Rate, Conversion)"]
+    DC -->|carrier_id| FQ["★ fact_carrier_quotes<br/>(Quote ID, Rates, Transit, Conversion)"]
     DM -->|merchant_id| FQ
     DD -->|quote_date_id| FQ
+
+    style FS fill:#0F172A,stroke:#10B981,stroke-width:2px,color:#FFFFFF
+    style FQ fill:#0F172A,stroke:#10B981,stroke-width:2px,color:#FFFFFF
+    style DC fill:#1E293B,stroke:#38BDF8,stroke-width:2px,color:#FFFFFF
+    style DM fill:#1E293B,stroke:#38BDF8,stroke-width:2px,color:#FFFFFF
+    style DG fill:#1E293B,stroke:#38BDF8,stroke-width:2px,color:#FFFFFF
+    style DD fill:#1E293B,stroke:#38BDF8,stroke-width:2px,color:#FFFFFF
 ```
 
 ### 📋 Dimensional Data Dictionary
