@@ -1,0 +1,218 @@
+/*
+========================================================================================
+GP-007: Logistics & Shipping Executive Analytics Hub (Skydropx / Frenet)
+Module: Enterprise DAX Semantic Measure Suite (dax_measures.dax)
+
+Optimized for Power BI / Analysis Services VertiPaq Storage Engine.
+All measures use explicit variable evaluation (VAR) and avoid expensive row-context
+iteration over high-cardinality tables.
+========================================================================================
+*/
+
+// =============================================================================
+// SECTION 1: CORE VOLUME & INGESTION METRICS
+// =============================================================================
+
+[Total Quotes] = 
+COUNTROWS('fact_carrier_quotes')
+
+[Total Shipments] = 
+COUNTROWS('fact_shipments')
+
+[Quote Conversion Rate %] = 
+DIVIDE(
+    CALCULATE([Total Shipments]),
+    [Total Quotes],
+    0
+)
+
+[Total Billed Weight Kg] = 
+SUM('fact_shipments'[billed_weight_kg])
+
+[Total Declared Weight Kg] = 
+SUM('fact_shipments'[declared_weight_kg])
+
+[Avg Billed Weight Kg] = 
+AVERAGE('fact_shipments'[billed_weight_kg])
+
+
+// =============================================================================
+// SECTION 2: SLA, TRANSIT TIMES & ON-TIME DELIVERY (OTD)
+// =============================================================================
+
+[On-Time Shipments Count] = 
+CALCULATE(
+    [Total Shipments],
+    'fact_shipments'[is_sla_breached] = 0
+)
+
+[SLA Breach Count] = 
+CALCULATE(
+    [Total Shipments],
+    'fact_shipments'[is_sla_breached] = 1
+)
+
+[OTD Rate %] = 
+DIVIDE(
+    [On-Time Shipments Count],
+    [Total Shipments],
+    0
+)
+
+[SLA Breach Rate %] = 
+DIVIDE(
+    [SLA Breach Count],
+    [Total Shipments],
+    0
+)
+
+[Avg Actual Transit Time Days] = 
+AVERAGE('fact_shipments'[transit_time_days])
+
+[Avg Promised SLA Days] = 
+AVERAGE('fact_shipments'[promised_sla_days])
+
+[Transit Time SLA Delta Days] = 
+[Avg Actual Transit Time Days] - [Avg Promised SLA Days]
+
+[Delivery Exception Count] = 
+CALCULATE(
+    [Total Shipments],
+    'fact_shipments'[is_exception] = 1
+)
+
+[Delivery Exception Rate %] = 
+DIVIDE(
+    [Delivery Exception Count],
+    [Total Shipments],
+    0
+)
+
+
+// =============================================================================
+// SECTION 3: FINANCIAL REVENUE, CARRIER COSTS & MARGIN LEAKAGE
+// =============================================================================
+
+[Total Gross Revenue (GMV)] = 
+SUM('fact_shipments'[gross_revenue])
+
+[Total Billed Carrier Cost] = 
+SUM('fact_shipments'[billed_carrier_cost])
+
+[Total Quoted Shipping Fee] = 
+SUM('fact_shipments'[quoted_shipping_fee])
+
+[Total Net Margin $] = 
+[Total Gross Revenue (GMV)] - [Total Billed Carrier Cost]
+
+[Net Margin %] = 
+DIVIDE(
+    [Total Net Margin $],
+    [Total Gross Revenue (GMV)],
+    0
+)
+
+[Carrier Cost Discrepancy $] = 
+SUM('fact_shipments'[carrier_cost_variance])
+
+[Carrier Cost Variance %] = 
+DIVIDE(
+    [Carrier Cost Discrepancy $],
+    [Total Quoted Shipping Fee],
+    0
+)
+
+[Weight Discrepancy Audit Count] = 
+CALCULATE(
+    [Total Shipments],
+    'fact_shipments'[is_weight_discrepancy] = 1
+)
+
+[Weight Discrepancy Rate %] = 
+DIVIDE(
+    [Weight Discrepancy Audit Count],
+    [Total Shipments],
+    0
+)
+
+
+// =============================================================================
+// SECTION 4: TIME INTELLIGENCE & MOVING AVERAGES
+// =============================================================================
+
+[Shipments MTD] = 
+TOTALMTD([Total Shipments], 'dim_date'[full_date])
+
+[Shipments YTD] = 
+TOTALYTD([Total Shipments], 'dim_date'[full_date])
+
+[Gross Revenue YTD] = 
+TOTALYTD([Total Gross Revenue (GMV)], 'dim_date'[full_date])
+
+[Shipments Prior Month] = 
+CALCULATE(
+    [Total Shipments],
+    PARALLELPERIOD('dim_date'[full_date], -1, MONTH)
+)
+
+[Shipments MoM Growth %] = 
+VAR _Current = [Total Shipments]
+VAR _Prior = [Shipments Prior Month]
+RETURN
+    DIVIDE(_Current - _Prior, _Prior, 0)
+
+[OTD Rate Prior Month %] = 
+CALCULATE(
+    [OTD Rate %],
+    PARALLELPERIOD('dim_date'[full_date], -1, MONTH)
+)
+
+[7-Day Rolling Avg Transit Days] = 
+VAR _LastDate = MAX('dim_date'[full_date])
+VAR _Period = DATESINPERIOD('dim_date'[full_date], _LastDate, -7, DAY)
+RETURN
+    CALCULATE(
+        AVERAGE('fact_shipments'[transit_time_days]),
+        _Period
+    )
+
+
+// =============================================================================
+// SECTION 5: DYNAMIC RANKING & PARETO ANALYSIS (80/20 RULE)
+// =============================================================================
+
+[Merchant GMV Rank] = 
+IF(
+    HASONEVALUE('dim_merchants'[merchant_name]),
+    RANKX(
+        ALLSELECTED('dim_merchants'),
+        [Total Gross Revenue (GMV)],
+        ,
+        DESC,
+        DENSE
+    )
+)
+
+[Cumulative Merchant GMV %] = 
+VAR _CurrentMerchantGMV = [Total Gross Revenue (GMV)]
+VAR _TotalSelectedGMV = CALCULATE([Total Gross Revenue (GMV)], ALLSELECTED('dim_merchants'))
+VAR _Rank = [Merchant GMV Rank]
+VAR _CumulativeTable = 
+    FILTER(
+        ALLSELECTED('dim_merchants'),
+        [Merchant GMV Rank] <= _Rank
+    )
+VAR _CumulativeGMV = 
+    SUMX(
+        _CumulativeTable,
+        [Total Gross Revenue (GMV)]
+    )
+RETURN
+    DIVIDE(_CumulativeGMV, _TotalSelectedGMV, 0)
+
+[Pareto 80/20 Classification] = 
+IF(
+    [Cumulative Merchant GMV %] <= 0.80,
+    "Top 80% Tier-A Merchant",
+    "Tail 20% Tier-B Merchant"
+)
