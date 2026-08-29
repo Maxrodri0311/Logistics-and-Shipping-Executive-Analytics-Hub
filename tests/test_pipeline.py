@@ -1,5 +1,5 @@
 """
-GP-007: Logistics & Shipping Executive Analytics Hub (Skydropx / Frenet)
+Logistics KPI Automation & Multi-Carrier Analytics Platform
 Module: Comprehensive Pytest Verification Suite (test_pipeline.py)
 
 Validates data integrity, foreign key constraints, financial logic consistency,

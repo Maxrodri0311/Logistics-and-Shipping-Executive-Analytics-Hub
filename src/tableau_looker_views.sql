@@ -1,5 +1,5 @@
 -- =============================================================================
--- GP-007: Logistics & Shipping Executive Analytics Hub (Skydropx / Frenet)
+-- Logistics KPI Automation & Multi-Carrier Analytics Platform
 -- Module: Tableau & Looker Studio Analytical Semantic Views (tableau_looker_views.sql)
 --
 -- Provides flat, pre-joined dimensional models optimized for single-pass ingestion

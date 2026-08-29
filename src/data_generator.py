@@ -1,5 +1,5 @@
 """
-GP-007: Logistics & Shipping Executive Analytics Hub (Skydropx / Frenet)
+Logistics KPI Automation & Multi-Carrier Analytics Platform
 Module: High-Density Synthetic Logistics Event Generator (data_generator.py)
 
 Generates realistic e-commerce logistics, freight quoting, and multi-carrier
@@ -336,7 +336,7 @@ class LogisticsDataGenerator:
 # -----------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Logistics Event Generator for GP-007")
+    parser = argparse.ArgumentParser(description="Logistics Event Generator")
     parser.add_argument("--shipments", type=int, default=35000, help="Number of shipments to generate")
     parser.add_argument("--quotes", type=int, default=50000, help="Number of quotes to generate")
     parser.add_argument("--days", type=int, default=180, help="Historical days range")
@@ -345,7 +345,7 @@ def main():
     args = parser.parse_args()
 
     print("=" * 80)
-    print(">> GP-007: LOGISTICS & SHIPPING HIGH-DENSITY EVENT GENERATOR")
+    print(">> LOGISTICS & SHIPPING HIGH-DENSITY EVENT GENERATOR")
     print(f">> Target: {args.shipments:,} shipments | {args.quotes:,} quotes | {args.days} days")
     print("=" * 80)
 

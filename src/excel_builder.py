@@ -1,5 +1,5 @@
 """
-GP-007: Logistics & Shipping Executive Analytics Hub (Skydropx / Frenet)
+Logistics KPI Automation & Multi-Carrier Analytics Platform
 Module: Executive Excel KPI Automation Engine (excel_builder.py)
 
 Extracts aggregated and granular data from DuckDB OLAP engine and compiles a
@@ -329,7 +329,7 @@ class ExecutiveExcelBuilder:
 
 def main():
     print("=" * 80)
-    print(">> GP-007: C-LEVEL EXECUTIVE EXCEL DASHBOARD AUTOMATION ENGINE")
+    print(">> C-LEVEL EXECUTIVE EXCEL DASHBOARD AUTOMATION ENGINE")
     print("=" * 80)
     start_time = time.time()
     

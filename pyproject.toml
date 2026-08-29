@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "logistics-executive-analytics-hub"
 version = "1.0.0"
-description = "GP-007: Enterprise Logistics & Shipping Executive Analytics Hub with Kimball Star Schema, DAX, and Excel Automation"
+description = "Enterprise Logistics & Shipping Executive Analytics Hub with Kimball Star Schema, DAX, and Excel Automation"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [

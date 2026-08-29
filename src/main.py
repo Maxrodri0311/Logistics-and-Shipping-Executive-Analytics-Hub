@@ -1,5 +1,5 @@
 """
-GP-007: Logistics & Shipping Executive Analytics Hub (Skydropx / Frenet)
+Logistics KPI Automation & Multi-Carrier Analytics Platform
 Module: Master Pipeline Orchestrator (main.py)
 
 Executes the end-to-end automated analytics lifecycle:
@@ -25,7 +25,7 @@ from src.excel_builder import ExecutiveExcelBuilder
 def run_full_pipeline(shipments: int = 35000, quotes: int = 50000, days: int = 180):
     total_start = time.time()
     print("=" * 85)
-    print(">> GP-007: END-TO-END EXECUTIVE LOGISTICS ANALYTICS PIPELINE")
+    print(">> END-TO-END EXECUTIVE LOGISTICS ANALYTICS PIPELINE")
     print(f">> Target Volume: {shipments:,} shipments | {quotes:,} quotes | {days} days history")
     print("=" * 85)
 
@@ -74,7 +74,7 @@ def run_full_pipeline(shipments: int = 35000, quotes: int = 50000, days: int = 1
 
 
 def main():
-    parser = argparse.ArgumentParser(description="GP-007 Master Analytics Pipeline")
+    parser = argparse.ArgumentParser(description="Logistics Master Analytics Pipeline")
     parser.add_argument("--shipments", type=int, default=35000, help="Shipment volume")
     parser.add_argument("--quotes", type=int, default=50000, help="Quotes volume")
     parser.add_argument("--days", type=int, default=180, help="Historical days range")

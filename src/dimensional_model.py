@@ -1,5 +1,5 @@
 """
-GP-007: Logistics & Shipping Executive Analytics Hub (Skydropx / Frenet)
+Logistics KPI Automation & Multi-Carrier Analytics Platform
 Module: Kimball Star Schema & OLAP Dimensional Engine (dimensional_model.py)
 
 Transforms raw logistics events into an optimized Kimball Star Schema using DuckDB,
@@ -257,7 +257,7 @@ class DimensionalModelEngine:
 
 def main():
     print("=" * 80)
-    print(">> GP-007: DUCKDB KIMBALL STAR SCHEMA & DIMENSIONAL ENGINE")
+    print(">> DUCKDB KIMBALL STAR SCHEMA & DIMENSIONAL ENGINE")
     print("=" * 80)
     start_time = time.time()
     

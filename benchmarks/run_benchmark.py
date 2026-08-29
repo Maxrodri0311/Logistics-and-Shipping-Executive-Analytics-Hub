@@ -1,5 +1,5 @@
 """
-GP-007: Logistics & Shipping Executive Analytics Hub (Skydropx / Frenet)
+Logistics KPI Automation & Multi-Carrier Analytics Platform
 Module: Quantitative Performance & Compression Benchmark (run_benchmark.py)
 
 Measures DuckDB OLAP query latencies (p50, p95, p99), memory efficiency, and
@@ -68,7 +68,7 @@ def compute_compression_metrics(raw_dir: str = "data/raw", proc_dir: str = "data
 
 def main():
     print("=" * 85)
-    print(">> GP-007: QUANTITATIVE BENCHMARKING SUITE (DUCKDB & KIMBALL STAR SCHEMA)")
+    print(">> QUANTITATIVE BENCHMARKING SUITE (DUCKDB & KIMBALL STAR SCHEMA)")
     print("=" * 85)
 
     # Ingest / Benchmark on current processed lakehouse
