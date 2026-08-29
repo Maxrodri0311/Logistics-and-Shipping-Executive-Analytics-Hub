@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  logistics_analytics_hub:
+    build: .
+    container_name: gp007_logistics_analytics_hub
+    volumes:
+      - ./data:/app/data
+      - ./dist:/app/dist
+    command: python src/main.py --shipments 35000 --quotes 50000 --days 180

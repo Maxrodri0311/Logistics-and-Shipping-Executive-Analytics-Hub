@@ -275,7 +275,6 @@ class LogisticsDataGenerator:
                 elif exc_roll < 0.12:
                     delivery_status = "LOST_IN_TRANSIT"
                     is_exception = 1
-                    net_margin = round(net_margin - billed_carrier_cost, 2)  # Claim penalty
                 else:
                     delivery_status = "DELIVERED_LATE"
                     is_exception = 0
