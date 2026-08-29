@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "logistics-executive-analytics-hub"
+version = "1.0.0"
+description = "GP-007: Enterprise Logistics & Shipping Executive Analytics Hub with Kimball Star Schema, DAX, and Excel Automation"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Maximiliano Rodriguez", email = "maxirodriguez.dev@gmail.com" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Office/Business :: Financial :: Point-Of-Sale",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "duckdb>=0.10.0",
+    "pandas>=2.1.0",
+    "numpy>=1.26.0",
+    "pyarrow>=14.0.0",
+    "openpyxl>=3.1.2",
+    "xlsxwriter>=3.1.9",
+    "tabulate>=0.9.0",
+    "pydantic>=2.5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
