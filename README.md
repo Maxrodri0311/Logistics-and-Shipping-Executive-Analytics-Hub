@@ -18,111 +18,56 @@ The platform transforms raw shipping quotes and tracking events into an optimize
 
 ```mermaid
 flowchart TD
-    subgraph Ingestion & Storage
-        A[Carrier Quotes & Tracking Webhooks] -->|Batch Ingestion| B[(Raw Parquet Lakehouse)]
+    subgraph S1 ["1. Ingestion Layer"]
+        A["Carrier Quotes & Tracking Webhooks"] --> B[("Raw Parquet Lakehouse")]
     end
 
-    subgraph OLAP & Dimensional Modeling
-        B --> C[DuckDB Analytical Engine]
-        C --> D[(fact_shipments)]
-        C --> E[(fact_carrier_quotes)]
-        C --> F[(dim_carriers)]
-        C --> G[(dim_merchants)]
-        C --> H[(dim_geography)]
-        C --> I[(dim_date)]
+    subgraph S2 ["2. Dimensional Modeling & OLAP"]
+        B --> C["DuckDB Analytical Engine"]
+        C --> D[("Kimball Star Schema")]
     end
 
-    subgraph Multi-Platform Semantic Layer
-        D & E & F & G & H & I --> J[Power BI DAX Measure Suite]
-        D & E & F & G & H & I --> K[Tableau Hyper & Looker Views]
-        D & E & F & G & H & I --> L[Headless OpenPyXL Excel Engine]
+    subgraph S3 ["3. Multi-Platform Semantic Layer"]
+        D --> E["Power BI VertiPaq DAX"]
+        D --> F["Tableau Hyper & Looker SQL"]
+        D --> G["Python OpenPyXL Engine"]
     end
 
-    subgraph Automated Deliverables
-        J --> M[Interactive Power BI Reports]
-        K --> N[Tableau / Looker Self-Service Views]
-        L --> O[Executive C-Level Workbook .xlsx]
+    subgraph S4 ["4. Executive Deliverables"]
+        E --> H["Interactive Power BI Reports"]
+        F --> I["Self-Service BI Views"]
+        G --> J["Executive Board Workbook (.xlsx)"]
     end
 ```
+
 
 ---
 
-## 🗄️ Kimball Star Schema (ERD)
+## 🗄️ Kimball Star Schema Topology
 
 ```mermaid
-erDiagram
-    dim_carriers ||--o{ fact_shipments : "carrier_id"
-    dim_merchants ||--o{ fact_shipments : "merchant_id"
-    dim_geography ||--o{ fact_shipments : "dest_geo_id"
-    dim_date ||--o{ fact_shipments : "order_date_id"
+flowchart LR
+    DC["dim_carriers<br/>(Carrier ID, SLA Target, Contract Tier)"] -->|carrier_id| FS["★ fact_shipments<br/>(Shipment ID, Weight, Rates, Margin, SLAs)"]
+    DM["dim_merchants<br/>(Merchant ID, Tier, Industry, Markup)"] -->|merchant_id| FS
+    DG["dim_geography<br/>(Geo ID, Region, Zone Type, Surcharge)"] -->|dest_geo_id| FS
+    DD["dim_date<br/>(Date ID, Year, Month, Day, Week)"] -->|order_date_id| FS
 
-    dim_carriers ||--o{ fact_carrier_quotes : "carrier_id"
-    dim_merchants ||--o{ fact_carrier_quotes : "merchant_id"
-    dim_date ||--o{ fact_carrier_quotes : "quote_date_id"
-
-    fact_shipments {
-        string shipment_id PK
-        string tracking_number
-        string merchant_id FK
-        string carrier_id FK
-        string dest_geo_id FK
-        int order_date_id FK
-        string service_level
-        string delivery_status
-        float declared_weight_kg
-        float billed_weight_kg
-        float quoted_shipping_fee
-        float billed_carrier_cost
-        float gross_revenue
-        float net_margin
-        float carrier_cost_variance
-        int transit_time_days
-        int promised_sla_days
-        int is_sla_breached
-        int is_exception
-    }
-
-    fact_carrier_quotes {
-        string quote_id PK
-        string merchant_id FK
-        string carrier_id FK
-        int quote_date_id FK
-        float quoted_rate
-        float estimated_transit_days
-        int was_converted_to_shipment
-    }
-
-    dim_carriers {
-        string carrier_id PK
-        string carrier_name
-        string contract_tier
-        string service_level
-        float historical_otd_target
-    }
-
-    dim_merchants {
-        string merchant_id PK
-        string merchant_name
-        string merchant_tier
-        string industry_category
-    }
-
-    dim_geography {
-        string geo_id PK
-        string state_region
-        string zone_type
-        float remote_surcharge
-    }
-
-    dim_date {
-        int date_id PK
-        date full_date
-        int year
-        int quarter
-        int month
-        string month_name
-    }
+    DC -->|carrier_id| FQ["★ fact_carrier_quotes<br/>(Quote ID, Quoted Rate, Conversion)"]
+    DM -->|merchant_id| FQ
+    DD -->|quote_date_id| FQ
 ```
+
+### 📋 Dimensional Data Dictionary
+
+| Table Name | Type | Key Fields / Grain | Business Role & Cardinality |
+| :--- | :---: | :--- | :--- |
+| **`fact_shipments`** | Fact (Accumulating) | `shipment_id` (PK), `carrier_id` (FK), `merchant_id` (FK), `dest_geo_id` (FK), `order_date_id` (FK) | Granular shipment lifecycle: billing, carrier cost, net margin, transit time & SLA breach flags. |
+| **`fact_carrier_quotes`** | Fact (Transactional) | `quote_id` (PK), `carrier_id` (FK), `merchant_id` (FK), `quote_date_id` (FK) | Real-time shipping quote requests and conversion rate to active shipments. |
+| **`dim_carriers`** | Dimension (Conformed) | `carrier_id` (PK), `carrier_name`, `contract_tier`, `service_level` | Carrier master catalog with contractual SLA commitments and audit rates. |
+| **`dim_merchants`** | Dimension (Conformed) | `merchant_id` (PK), `merchant_name`, `merchant_tier`, `industry_category` | E-commerce merchant catalog, volume tiers, and target markup percentages. |
+| **`dim_geography`** | Dimension (Conformed) | `geo_id` (PK), `state_region`, `zone_type`, `remote_surcharge` | Logistics zones, hub classifications, and extended remote delivery surcharges. |
+| **`dim_date`** | Dimension (Role-Playing) | `date_id` (PK), `full_date`, `year`, `quarter`, `month`, `week_of_year` | Date dimension supporting Time Intelligence (`MTD`, `YTD`, `MoM`, `Moving Averages`). |
+
 
 ---
 
