@@ -173,7 +173,19 @@ docker-compose up --build
 
 ---
 
-## 👨‍💻 Author
-- **Maximiliano Rodríguez** — Data Analytics & BI Solutions
-- **LinkedIn:** [Maximiliano Rodriguez](https://linkedin.com/in/maximiliano-rodriguez-982674375)
-- **GitHub:** [@Maxrodri0311](https://github.com/Maxrodri0311)
+## 👨‍💻 Author & Contact
+
+**Maximiliano Rodriguez**  
+*Data Analytics • BI Solutions • Data Architecture*  
+
+<br/>
+
+[![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/maximiliano-rodriguez-982674375/)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Maxrodri0311)
+[![Email Contact](https://img.shields.io/badge/Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:maxrodri0311@gmail.com)
+
+<br/>
+
+* 💼 **LinkedIn:** [maximiliano-rodriguez-982674375](https://www.linkedin.com/in/maximiliano-rodriguez-982674375/)
+* 🐙 **GitHub:** [Maxrodri0311](https://github.com/Maxrodri0311)
+* 📧 **Email:** `maxrodri0311@gmail.com`
